@@ -18,6 +18,9 @@
 }
 
 * { box-sizing: border-box; }
+/* The `hidden` attribute must always win, even over our display:grid/flex
+   rules on overlays/drawers. Without this, modals show on load and won't close. */
+[hidden] { display: none !important; }
 html, body { margin: 0; padding: 0; }
 body {
   font-family: 'Nunito', system-ui, sans-serif;
