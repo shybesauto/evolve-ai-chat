@@ -41,18 +41,22 @@
 
   <!-- ===== TAB NAV ===== -->
   <nav class="tabs">
-    <button class="tab active" data-tab="team">👥 The Team</button>
+    <button class="tab active" data-tab="team">🏭 Factory</button>
     <button class="tab" data-tab="missions">🎯 Missions</button>
     <button class="tab" data-tab="shop">🏪 Shop Stats</button>
     <button class="tab" data-tab="help">❓ How to Play</button>
   </nav>
 
   <main class="stage">
-    <!-- ===== TEAM TAB ===== -->
+    <!-- ===== FACTORY TAB ===== -->
     <section id="tab-team" class="panel active">
-      <h2 class="panel-title">Your AI Dream Team</h2>
-      <p class="panel-sub">Tap a teammate to chat, or give them a job to work on. Each one is an AI with super-powers! 🤖</p>
-      <div id="agentGrid" class="agent-grid"><!-- agent cards injected by app.js --></div>
+      <h2 class="panel-title">Your Factory Floor 🏭</h2>
+      <p class="panel-sub">Tap a <b>room</b> to walk in and chat with that teammate. Press <b>Run the Line</b> to watch them carry the work room-to-room! 🚚</p>
+      <div class="factory-bar">
+        <button id="runLineBtn" class="btn btn-primary">▶ Run the Production Line</button>
+        <span class="factory-hint">Each glowing room is one AI teammate doing their job.</span>
+      </div>
+      <div id="factory" class="factory"><!-- rooms injected by app.js --></div>
     </section>
 
     <!-- ===== MISSIONS TAB ===== -->
