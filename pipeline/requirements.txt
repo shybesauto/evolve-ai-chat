@@ -1,0 +1,13 @@
+anthropic>=0.40.0
+flask>=3.1.0
+flask-cors>=5.0.0
+apscheduler>=3.11.0
+requests>=2.32.0
+python-dotenv>=1.0.0
+ffmpeg-python>=0.2.0
+Pillow>=11.0.0
+google-api-python-client>=2.160.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.2.0
+pydantic>=2.10.0
+pytz>=2024.2

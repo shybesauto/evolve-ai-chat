@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolve AI — Video Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <div>
+        <div class="logo-title">EVOLVE AI</div>
+        <div class="logo-sub">Motivational Video Pipeline</div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="pill" id="statusPill">
+      <span class="pulse-dot" id="pulseDot"></span>
+      <span id="statusText">Idle</span>
+    </div>
+    <div class="progress-wrap" id="progressWrap" hidden>
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Stat cards ── -->
+<section class="stat-row" id="statRow"></section>
+
+<!-- ── Main grid ── -->
+<main class="grid">
+
+  <!-- Pipeline controls -->
+  <div class="card span2">
+    <div class="card-head">
+      <h2>Pipeline Controls</h2>
+      <div class="stage-badge" id="stageBadge">Idle</div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary" id="btnRunAll" onclick="runStage('all')">
+        ▶ Run Full Pipeline
+      </button>
+      <button class="btn btn-ghost" onclick="runStage('research')">🔍 Research Only</button>
+      <button class="btn btn-ghost" onclick="runStage('scripts')">✍ Scripts Only</button>
+      <button class="btn btn-ghost" onclick="runStage('videos')">🎬 Videos Only</button>
+      <button class="btn btn-ghost" onclick="runStage('uploads')">🚀 Upload Queue</button>
+    </div>
+    <div class="log-box" id="logBox">
+      <div class="log-entry">— Dashboard ready. Configure your <code>.env</code> and hit <b>Run Full Pipeline</b>.</div>
+    </div>
+  </div>
+
+  <!-- Queue -->
+  <div class="card">
+    <div class="card-head"><h2>Upload Queue</h2><span id="queueCount" class="badge">0</span></div>
+    <div class="queue-list" id="queueList">
+      <div class="empty-state">No videos queued.</div>
+    </div>
+  </div>
+
+  <!-- Published -->
+  <div class="card span2">
+    <div class="card-head"><h2>Published Videos</h2><span id="pubCount" class="badge">0</span></div>
+    <div class="table-wrap">
+      <table id="pubTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Platform</th>
+            <th>Published</th>
+            <th>Views</th>
+            <th>Likes</th>
+            <th>Revenue</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody id="pubBody">
+          <tr><td colspan="7" class="empty-cell">No published videos yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Revenue chart -->
+  <div class="card">
+    <div class="card-head"><h2>30-Day Analytics</h2></div>
+    <canvas id="metricsChart" height="220"></canvas>
+  </div>
+
+</main>
+
+<script src="/static/dashboard.js"></script>
+</body>
+</html>
