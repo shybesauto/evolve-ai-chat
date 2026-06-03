@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merch Mogul HQ 🚀</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background bubbles -->
+  <div class="bg-bubbles" aria-hidden="true"></div>
+
+  <!-- ===== TOP BAR / HUD ===== -->
+  <header class="hud">
+    <div class="hud-left">
+      <div class="logo">🚀</div>
+      <div class="shop-name-wrap">
+        <input id="shopName" class="shop-name" maxlength="22" value="Merch Mogul HQ" title="Click to rename your shop!" />
+        <span class="shop-tag">your AI-powered merch empire</span>
+      </div>
+    </div>
+
+    <div class="hud-right">
+      <div class="stat coins" title="Coins you've earned">
+        <span class="stat-icon">🪙</span>
+        <span id="coins">0</span>
+      </div>
+      <div class="stat level" title="Your business level">
+        <span class="stat-icon">⭐</span>
+        <span>Lv <b id="level">1</b></span>
+      </div>
+      <div class="xpbar-wrap" title="Earn XP to level up!">
+        <div class="xpbar"><div id="xpfill" class="xpfill"></div></div>
+        <span id="xptext" class="xptext">0 / 100 XP</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== TAB NAV ===== -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="team">🏭 Factory</button>
+    <button class="tab" data-tab="missions">🎯 Missions</button>
+    <button class="tab" data-tab="shop">🏪 Shop Stats</button>
+    <button class="tab" data-tab="help">❓ How to Play</button>
+  </nav>
+
+  <main class="stage">
+    <!-- ===== FACTORY TAB ===== -->
+    <section id="tab-team" class="panel active">
+      <h2 class="panel-title">Your Factory Floor 🏭</h2>
+      <p class="panel-sub">Tap a <b>room</b> to walk in and chat with that teammate. Press <b>Run the Line</b> to watch them carry the work room-to-room! 🚚</p>
+      <div class="factory-bar">
+        <button id="runLineBtn" class="btn btn-primary">▶ Run the Production Line</button>
+        <span class="factory-hint">Each glowing room is one AI teammate doing their job.</span>
+      </div>
+      <div id="factory" class="factory"><!-- rooms injected by app.js --></div>
+    </section>
+
+    <!-- ===== MISSIONS TAB ===== -->
+    <section id="tab-missions" class="panel">
+      <h2 class="panel-title">Mission Board 🎯</h2>
+      <p class="panel-sub">Complete missions to earn coins and XP. Ask a teammate for help, then mark it done!</p>
+      <div id="missionList" class="mission-list"><!-- missions injected --></div>
+    </section>
+
+    <!-- ===== SHOP STATS TAB ===== -->
+    <section id="tab-shop" class="panel">
+      <h2 class="panel-title">Shop Stats 🏪</h2>
+      <p class="panel-sub">Watch your empire grow. These numbers go up as you play and complete missions!</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-icon">🪙</div><div class="stat-card-num" id="s-coins">0</div><div class="stat-card-label">Coins</div></div>
+        <div class="stat-card"><div class="stat-card-icon">⭐</div><div class="stat-card-num" id="s-level">1</div><div class="stat-card-label">Level</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🏆</div><div class="stat-card-num" id="s-missions">0</div><div class="stat-card-label">Missions Done</div></div>
+        <div class="stat-card"><div class="stat-card-icon">💬</div><div class="stat-card-num" id="s-chats">0</div><div class="stat-card-label">Ideas Discussed</div></div>
+        <div class="stat-card"><div class="stat-card-icon">📦</div><div class="stat-card-num" id="s-products">0</div><div class="stat-card-label">Products Saved</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🔥</div><div class="stat-card-num" id="s-streak">0</div><div class="stat-card-label">Day Streak</div></div>
+      </div>
+
+      <div class="ideabox">
+        <h3>💡 Idea Vault</h3>
+        <p class="panel-sub">Save your best product ideas here so you never forget them.</p>
+        <div class="idea-add">
+          <input id="ideaInput" placeholder="e.g. Glow-in-the-dark cat stickers" maxlength="80" />
+          <button id="ideaAddBtn" class="btn btn-primary">＋ Save Idea</button>
+        </div>
+        <ul id="ideaList" class="idea-list"></ul>
+      </div>
+
+      <button id="resetBtn" class="btn btn-ghost danger">🗑️ Reset Game (start over)</button>
+    </section>
+
+    <!-- ===== HELP TAB ===== -->
+    <section id="tab-help" class="panel">
+      <h2 class="panel-title">How to Play ❓</h2>
+      <div class="help-cards">
+        <div class="help-card"><span class="help-emoji">👥</span><b>Meet your team</b><p>You have 5 AI teammates. Each is good at a different job — design, marketing, customer help, money, and big plans.</p></div>
+        <div class="help-card"><span class="help-emoji">💬</span><b>Chat with them</b><p>Tap a teammate and ask anything about your shop. They'll give you real ideas! Every chat earns XP.</p></div>
+        <div class="help-card"><span class="help-emoji">🧑‍💼</span><b>Give them jobs</b><p>Press "Assign Job" to put a teammate to work on something. Their status changes to show what they're doing.</p></div>
+        <div class="help-card"><span class="help-emoji">🎯</span><b>Do missions</b><p>The Mission Board gives you challenges. Finish them to earn coins and level up your empire.</p></div>
+        <div class="help-card"><span class="help-emoji">⭐</span><b>Level up</b><p>Earn XP from chatting and missions. Fill the bar to reach the next level. How high can you go?</p></div>
+        <div class="help-card"><span class="help-emoji">🛟</span><b>Stay safe</b><p>Your teammates never ask for private info. For anything that costs money, always ask a parent first!</p></div>
+      </div>
+      <div class="parent-note">
+        <b>👋 Note for parents:</b> The AI teammates are powered by OpenAI and have built-in kid-safety rules. Set your <code>OPENAI_API_KEY</code> in Vercel to turn them on. See the README for the 5-minute setup.
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== CHAT DRAWER ===== -->
+  <div id="chatOverlay" class="chat-overlay" hidden></div>
+  <aside id="chatDrawer" class="chat-drawer" hidden aria-hidden="true">
+    <div class="chat-head" id="chatHead">
+      <button id="chatClose" class="chat-close" aria-label="Close chat">✕</button>
+      <div class="chat-avatar" id="chatAvatar">🎨</div>
+      <div>
+        <div class="chat-name" id="chatName">Pixel</div>
+        <div class="chat-role" id="chatRole">Design Director</div>
+      </div>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-quick" id="chatQuick"></div>
+    <form id="chatForm" class="chat-input">
+      <input id="chatField" placeholder="Ask your teammate something…" autocomplete="off" />
+      <button type="submit" class="btn btn-primary" id="chatSend">Send ➤</button>
+    </form>
+  </aside>
+
+  <!-- ===== ASSIGN JOB MODAL ===== -->
+  <div id="assignOverlay" class="modal-overlay" hidden>
+    <div class="modal">
+      <h3 id="assignTitle">Assign a Job 🧑‍💼</h3>
+      <p class="panel-sub">What should this teammate work on?</p>
+      <div id="assignOptions" class="assign-options"></div>
+      <div class="modal-actions">
+        <button id="assignCancel" class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST + CONFETTI ===== -->
+  <div id="toast" class="toast" hidden></div>
+  <canvas id="confetti" class="confetti" hidden></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>
