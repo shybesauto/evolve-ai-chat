@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Shybes Bay">
+  <rect width="64" height="64" rx="14" fill="#0b0e13"/>
+  <!-- a microphone, because that is what the tech is looking for on a home screen -->
+  <rect x="26" y="14" width="12" height="22" rx="6" fill="#4da3ff"/>
+  <path d="M20 32a12 12 0 0 0 24 0" fill="none" stroke="#4da3ff" stroke-width="4" stroke-linecap="round"/>
+  <line x1="32" y1="44" x2="32" y2="50" stroke="#4da3ff" stroke-width="4" stroke-linecap="round"/>
+  <line x1="24" y1="50" x2="40" y2="50" stroke="#4da3ff" stroke-width="4" stroke-linecap="round"/>
+</svg>

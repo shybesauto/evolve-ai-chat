@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0e13">
+<title>Shybes Bay</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Enrollment: a tablet trades a one-time code for a device token. The
+     Shopmonkey token stays on the server and never comes near this screen. -->
+<div class="overlay center" id="enrollView">
+  <div class="panel">
+    <h1>Set up this tablet</h1>
+    <p>Enter the enrollment code from the office. This is a one-time step per bay.</p>
+    <div class="err" id="enrollErr"></div>
+    <input type="text" id="enrollCode" placeholder="ABCD-1234" autocapitalize="characters" autocomplete="off">
+    <button class="btn primary" id="enrollBtn" style="width:100%">Enroll</button>
+  </div>
+</div>
+
+<!-- Shift start: pick a user. Identity is the Shopmonkey user id. -->
+<div class="overlay center hidden" id="loginView">
+  <div class="panel">
+    <h1>Who's on this bay?</h1>
+    <p>Sign in at shift start. Whoever speaks next can claim the tablet by voice.</p>
+    <div class="err" id="loginErr"></div>
+    <div class="stack" id="userList"></div>
+  </div>
+</div>
+
+<!-- PIN, for the first high-risk write after a voice switch. -->
+<div class="overlay center hidden" id="pinView">
+  <div class="panel">
+    <h1 id="pinTitle">Confirm it's you</h1>
+    <p>A voice switch gets reads and notes straight away. Changing the order takes a PIN.</p>
+    <div class="err" id="pinErr"></div>
+    <input type="password" id="pinInput" inputmode="numeric" placeholder="••••" autocomplete="off">
+    <div class="stack">
+      <button class="btn primary" id="pinBtn">Unlock</button>
+      <button class="btn no" id="pinCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- The bay screen -->
+<div id="appView" class="hidden" style="display:flex;flex-direction:column;height:100%">
+  <header>
+    <div class="ro none" id="hdrRo">No RO loaded</div>
+    <div class="vehicle" id="hdrVehicle">Say a repair order number, a plate, or a name</div>
+    <div class="who" id="hdrWho"><span class="dot" id="hdrDot"></span><span id="hdrUser">—</span></div>
+  </header>
+
+  <div class="strip hidden" id="strip"></div>
+
+  <main id="main"></main>
+
+  <div class="actions">
+    <button class="action" data-sheet="diagrams"><span class="icon">⚡</span>Diagrams</button>
+    <button class="action" data-sheet="history"><span class="icon">🕓</span>History<span class="count" id="historyCount"></span></button>
+    <button class="action" data-sheet="notes"><span class="icon">📝</span>Notes<span class="count" id="notesCount"></span></button>
+  </div>
+
+  <!-- Voice bar: wake state, live transcript, confirmation prompts. -->
+  <div class="voice" id="voiceBar">
+    <button class="ptt" id="pttBtn" title="Hold to talk">🎙</button>
+    <div class="voice-body">
+      <div class="wake-state" id="wakeState">Hold the mic to talk</div>
+      <div class="transcript dim" id="transcript">Ready.</div>
+    </div>
+    <button class="wake-toggle" id="wakeToggle">Wake word: off</button>
+  </div>
+
+  <!-- Low-risk: spoken readback, then a yes. -->
+  <div class="voice confirm hidden" id="confirmVoice">
+    <button class="ptt" style="background:var(--amber)" id="confirmSpeakBtn">🔊</button>
+    <div class="confirm-text">
+      <span id="confirmText"></span>
+      <span class="hint" id="confirmHint">Say “yes” — or tap.</span>
+    </div>
+    <button class="btn yes" id="confirmYes">Yes</button>
+    <button class="btn no" id="confirmNo">No</button>
+  </div>
+
+  <!-- High-risk: a spoken yes is never sufficient. -->
+  <div class="voice confirm tap hidden" id="confirmTap">
+    <button class="ptt" style="background:var(--red)">!</button>
+    <div class="confirm-text">
+      <span id="tapText"></span>
+      <span class="hint">This one needs a tap. Voice can't confirm it.</span>
+    </div>
+    <button class="btn danger" id="tapConfirm">Confirm</button>
+    <button class="btn no" id="tapCancel">Cancel</button>
+  </div>
+</div>
+
+<!-- Sheet -->
+<div class="overlay hidden" id="sheetView">
+  <div class="sheet">
+    <header><h2 id="sheetTitle"></h2><button class="btn no" id="sheetClose">Close</button></header>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

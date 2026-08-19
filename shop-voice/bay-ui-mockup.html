@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bay UI mockup — Shop Voice Assistant</title>
+<style>
+/*
+  §11 Bay UI — read at arm's length, greasy fingers, bad lighting.
+
+  Decisions worth arguing with before anything gets built:
+   - dark ground, because bay lighting is overhead and a white screen glares;
+   - nothing below 17px, concern text at 30px;
+   - every touch target at least 64px tall — a gloved thumb is not a mouse;
+   - the header never scrolls away. It is what stops a note landing in the
+     wrong car, so it is not allowed to be off screen, ever.
+*/
+:root {
+  --bg: #0b0e13;
+  --panel: #161b24;
+  --panel-2: #1e2530;
+  --line: #2c3440;
+  --ink: #f4f7fb;
+  --ink-dim: #9fb0c4;
+  --accent: #4da3ff;
+  --amber: #ffb020;
+  --red: #ff5c5c;
+  --green: #3ddc84;
+  --radius: 14px;
+  --tap: 64px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 18px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 1. PERSISTENT HEADER — always visible. Non-negotiable. */
+header {
+  background: var(--panel);
+  border-bottom: 2px solid var(--line);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.ro {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+.ro .num { color: var(--accent); }
+.vehicle { font-size: 19px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 17px;
+  white-space: nowrap;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.no-ro { color: var(--amber); font-size: 26px; font-weight: 700; }
+
+main { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+/* 2. CUSTOMER CONCERN — the most prominent element on the screen. */
+.concern {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.concern h2 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--ink-dim);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.concern p { font-size: 30px; line-height: 1.3; font-weight: 500; }
+
+/* 3. DEFERRED WORK — one line, tappable count badge. Visible, not competing. */
+.deferred {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: var(--tap);
+  padding: 0 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 19px;
+}
+.deferred:active { background: var(--panel-2); }
+.badge {
+  background: var(--amber);
+  color: #241a00;
+  font-weight: 800;
+  font-size: 20px;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+}
+.chev { margin-left: auto; color: var(--ink-dim); font-size: 26px; }
+
+/* 4. SERVICES */
+.services { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.services h2 {
+  font-size: 14px; text-transform: uppercase; letter-spacing: 1.4px;
+  color: var(--ink-dim); font-weight: 600; padding: 14px 20px 10px;
+}
+.service {
+  display: flex; align-items: center; gap: 14px;
+  min-height: var(--tap); padding: 10px 20px;
+  border-top: 1px solid var(--line); font-size: 19px;
+}
+.service .name { flex: 1; }
+.service .tag {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 6px;
+}
+.tag.deferred-tag { background: rgba(255,176,32,.16); color: var(--amber); }
+.tag.declined { background: rgba(255,92,92,.16); color: var(--red); }
+.money { color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+
+/* 5. ACTION ROW — reachable without scrolling, so it lives outside <main>. */
+.actions { display: flex; gap: 12px; padding: 0 18px 14px; flex-shrink: 0; }
+.action {
+  flex: 1; min-height: 78px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink); font: inherit; font-size: 19px; font-weight: 600;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  cursor: pointer;
+}
+.action:active { background: var(--panel-2); border-color: var(--accent); }
+.action .icon { font-size: 24px; line-height: 1; }
+.action .count { font-size: 13px; color: var(--ink-dim); font-weight: 500; }
+
+/* 6. VOICE BAR — wake state, live transcript, confirmation prompts. */
+.voice {
+  background: var(--panel); border-top: 2px solid var(--line);
+  padding: 14px 18px; display: flex; align-items: center; gap: 16px;
+  min-height: 92px; flex-shrink: 0;
+}
+.ptt {
+  width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0;
+  background: var(--accent); border: none; color: #04121f;
+  font-size: 30px; cursor: pointer; display: grid; place-items: center;
+}
+.ptt:active { transform: scale(0.95); }
+.voice-body { flex: 1; min-width: 0; }
+.wake-state { font-size: 14px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--ink-dim); font-weight: 600; }
+.wake-state.live { color: var(--green); }
+.transcript { font-size: 22px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.transcript.dim { color: var(--ink-dim); font-style: italic; }
+.wake-toggle {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px;
+  color: var(--ink-dim); font: inherit; font-size: 15px; padding: 12px 16px; cursor: pointer; white-space: nowrap;
+}
+.wake-toggle.on { color: var(--green); border-color: rgba(61,220,132,.4); }
+
+/* Confirmation states replace the voice bar rather than floating over it:
+   a modal a greasy thumb can dismiss by accident is worse than no modal. */
+.confirm { background: var(--panel-2); border-top: 3px solid var(--amber); }
+.confirm.tap { border-top-color: var(--red); }
+.confirm-text { flex: 1; font-size: 21px; }
+.confirm-text .hint { display: block; font-size: 15px; color: var(--ink-dim); margin-top: 3px; }
+.btn {
+  min-height: var(--tap); padding: 0 26px; border-radius: 12px; border: none;
+  font: inherit; font-size: 19px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.btn.yes { background: var(--green); color: #04200f; }
+.btn.no { background: var(--panel); color: var(--ink); border: 1px solid var(--line); }
+.btn.danger { background: var(--red); color: #2a0505; }
+
+/* Sheets */
+.sheet-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.72);
+  display: none; align-items: flex-end; z-index: 20;
+}
+.sheet-backdrop.open { display: flex; }
+.sheet {
+  background: var(--panel); width: 100%; max-height: 82%;
+  border-radius: 20px 20px 0 0; border-top: 1px solid var(--line);
+  display: flex; flex-direction: column;
+}
+.sheet header { background: transparent; border-bottom: 1px solid var(--line); }
+.sheet h2 { font-size: 24px; font-weight: 700; }
+.sheet-body { overflow-y: auto; padding: 8px 18px 18px; }
+.close { margin-left: auto; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink); font: inherit; font-size: 17px; min-height: 52px; padding: 0 20px; border-radius: 12px; cursor: pointer; }
+.row { padding: 16px 4px; border-bottom: 1px solid var(--line); font-size: 19px; min-height: var(--tap); display: flex; align-items: center; gap: 14px; }
+.row:last-child { border-bottom: none; }
+.row .when { color: var(--ink-dim); font-size: 17px; white-space: nowrap; }
+.row .odo { margin-left: auto; color: var(--ink-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.note-row { display: block; }
+.note-row .meta { font-size: 15px; color: var(--ink-dim); margin-bottom: 6px; }
+.note-row .verbatim { font-size: 19px; }
+.note-row .draft { font-size: 17px; color: var(--ink-dim); border-left: 3px solid var(--line); padding-left: 12px; margin-top: 10px; }
+.stage { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; padding: 4px 8px; border-radius: 5px; background: rgba(255,176,32,.16); color: var(--amber); }
+
+/* Inspection mode: the sheet ticks off as findings land, so he can glance
+   rather than listen (§8). */
+.insp-item {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 58px; padding: 8px 4px; border-bottom: 1px solid var(--line); font-size: 19px;
+}
+.tick { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; flex-shrink: 0; font-size: 17px; }
+.tick.done { background: var(--green); border-color: var(--green); color: #04200f; font-weight: 800; }
+.tick.yellow { background: var(--amber); border-color: var(--amber); color: #241a00; font-weight: 800; }
+.insp-item .val { margin-left: auto; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+.insp-item.pending { color: var(--ink-dim); }
+
+/* Mockup-only scenario switcher. Not part of the design. */
+.scenarios { position: fixed; top: 0; right: 0; z-index: 30; display: flex; gap: 6px; padding: 6px; background: rgba(0,0,0,.55); border-bottom-left-radius: 12px; }
+.scenarios button { font: inherit; font-size: 13px; padding: 7px 11px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-dim); cursor: pointer; }
+.scenarios button.active { background: var(--accent); color: #04121f; border-color: var(--accent); font-weight: 700; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="scenarios">
+  <button data-scenario="loaded" class="active">Loaded</button>
+  <button data-scenario="empty">No RO</button>
+  <button data-scenario="confirm">Note readback</button>
+  <button data-scenario="tap">High risk</button>
+  <button data-scenario="ambiguous">Two Tahoes</button>
+  <button data-scenario="inspection">Inspection</button>
+</div>
+
+<!-- 1. PERSISTENT HEADER -->
+<header>
+  <div id="hdrLoaded">
+    <div class="ro">RO <span class="num">4471</span></div>
+  </div>
+  <div id="hdrEmpty" class="no-ro hidden">No RO loaded</div>
+  <div class="vehicle" id="hdrVehicle">Henderson · 2019 Chevrolet Tahoe · Silver · 96,420 mi</div>
+  <div class="who"><span class="dot"></span><span id="hdrUser">Danny Cole</span></div>
+</header>
+
+<main id="main">
+  <!-- 2. CUSTOMER CONCERN -->
+  <section class="concern" id="concernBlock">
+    <h2>Customer concern</h2>
+    <p>Brake pedal pulses under hard braking on the highway. Started about two weeks ago, worse when the truck is loaded.</p>
+  </section>
+
+  <!-- 3. DEFERRED WORK -->
+  <div class="deferred" id="deferredBar">
+    <span class="badge">1</span>
+    <span>deferred item on this vehicle</span>
+    <span class="chev">›</span>
+  </div>
+
+  <!-- 4. SERVICES -->
+  <section class="services" id="servicesBlock">
+    <h2>Services on this order</h2>
+    <div class="service"><span class="name">Diagnose brake pulsation</span><span class="money">$89.00</span></div>
+    <div class="service"><span class="name">Front pads and rotors</span><span class="money">$612.40</span></div>
+    <div class="service"><span class="name">Rear differential fluid</span><span class="tag deferred-tag">Deferred</span><span class="money">$148.00</span></div>
+  </section>
+
+  <!-- Ambiguity: candidates as tappable rows -->
+  <section class="services hidden" id="candidatesBlock">
+    <h2>Which one?</h2>
+    <div class="service"><span class="name"><strong>Henderson</strong> · 2019 Tahoe · Silver</span><span class="money">RO 4471</span></div>
+    <div class="service"><span class="name"><strong>Wozniak</strong> · 2021 Tahoe · White</span><span class="money">RO 4472</span></div>
+  </section>
+
+  <!-- Inspection sheet -->
+  <section class="services hidden" id="inspectionBlock">
+    <h2>Inspection — call them out in any order</h2>
+    <div class="sheet-body" style="padding:0 20px 12px">
+      <div class="insp-item"><span class="tick yellow">!</span><span>Front brakes</span><span class="val">4 mm</span></div>
+      <div class="insp-item"><span class="tick done">✓</span><span>Battery test</span><span class="val">12.4 V</span></div>
+      <div class="insp-item"><span class="tick done">✓</span><span>Left front tire</span><span class="val">7/32</span></div>
+      <div class="insp-item pending"><span class="tick"></span><span>Rear brakes</span></div>
+      <div class="insp-item pending"><span class="tick"></span><span>Right front tire</span></div>
+      <div class="insp-item pending"><span class="tick"></span><span>Engine oil</span></div>
+      <div class="insp-item pending"><span class="tick"></span><span>Coolant</span></div>
+    </div>
+  </section>
+</main>
+
+<!-- 5. ACTION ROW — no scrolling required -->
+<div class="actions">
+  <button class="action" data-sheet="diagrams"><span class="icon">⚡</span>Diagrams</button>
+  <button class="action" data-sheet="history"><span class="icon">🕓</span>History<span class="count">4 visits</span></button>
+  <button class="action" data-sheet="notes"><span class="icon">📝</span>Notes<span class="count">2 · 1 pending</span></button>
+</div>
+
+<!-- 6. VOICE BAR -->
+<div class="voice" id="voiceBar">
+  <button class="ptt" id="pttBtn" title="Push to talk">🎙</button>
+  <div class="voice-body">
+    <div class="wake-state" id="wakeState">Say “Hey Shybes” or hold the mic</div>
+    <div class="transcript dim" id="transcript">Listening for the wake word…</div>
+  </div>
+  <button class="wake-toggle on" id="wakeToggle">Wake word: on</button>
+</div>
+
+<!-- Low-risk: spoken readback + verbal yes -->
+<div class="voice confirm hidden" id="confirmVoice">
+  <button class="ptt" style="background:var(--amber)">🔊</button>
+  <div class="confirm-text">
+    “On RO 4471: left front caliper is possibly sticking. Is that right?”
+    <span class="hint">Say “yes” — or tap. Undo available for 30s after saving.</span>
+  </div>
+  <button class="btn yes">Yes</button>
+  <button class="btn no">No</button>
+</div>
+
+<!-- High-risk: a spoken yes is never sufficient -->
+<div class="voice confirm tap hidden" id="confirmTap">
+  <button class="ptt" style="background:var(--red)">!</button>
+  <div class="confirm-text">
+    Set RO 4471 to “Ready”?
+    <span class="hint">This one needs a tap. Voice can’t confirm a status change.</span>
+  </div>
+  <button class="btn danger">Confirm</button>
+  <button class="btn no">Cancel</button>
+</div>
+
+<!-- Sheets -->
+<div class="sheet-backdrop" id="backdrop">
+  <div class="sheet">
+    <header><h2 id="sheetTitle">History</h2><button class="close" id="sheetClose">Close</button></header>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<script>
+/* Mockup behaviour only — enough to click through, none of it real. */
+const $ = (id) => document.getElementById(id);
+
+const sheets = {
+  history: ['Brake history', `
+    <div class="row"><span>Front pads and rotors</span><span class="when">March 2026</span><span class="odo">88,240 mi</span></div>
+    <div class="row"><span>BR-FRT</span><span class="when">last month</span><span class="odo">94,010 mi</span></div>
+    <div class="row" style="color:var(--ink-dim)"><span>Spoken: “Brakes, March at 88,240. And again last month at 94,010.”</span></div>
+    <div class="row" style="color:var(--ink-dim);font-size:16px"><span>Recorded under three different names in the system. Matched by meaning, not spelling.</span></div>`],
+  notes: ['Notes on RO 4471', `
+    <div class="row note-row">
+      <div class="meta">Danny Cole · today 2:14pm · <span class="stage">Awaiting advisor</span></div>
+      <div class="verbatim">“Left front caliper is possibly sticking, pad wear uneven front to back, want a road test before I commit to it.”</div>
+      <div class="draft"><strong>Customer draft:</strong> We think the left front brake caliper may be sticking. We would like to road test the vehicle before recommending a repair.</div>
+    </div>
+    <div class="row note-row">
+      <div class="meta">Danny Cole · today 11:02am · approved</div>
+      <div class="verbatim">“Road test confirms pulsation under braking from about 50 down.”</div>
+    </div>`],
+  diagrams: ['Diagrams', `
+    <div class="row"><span>Not wired up yet — build step 6. Pull it up on ALLDATA.</span></div>
+    <div class="row" style="color:var(--ink-dim);font-size:16px"><span>When built: opens ALLDATA’s own viewer, so zoom, pan and page context survive. We don’t re-render their pages.</span></div>`],
+  deferred: ['Deferred work', `
+    <div class="row"><span>Rear differential fluid</span><span class="odo">$148.00</span></div>
+    <div class="row" style="color:var(--ink-dim);font-size:16px"><span>Recommended at the last visit and not sold. Yellow inspection findings land here too.</span></div>`],
+};
+
+function openSheet(key) {
+  const [title, body] = sheets[key] || ['—', ''];
+  $('sheetTitle').textContent = title;
+  $('sheetBody').innerHTML = body;
+  $('backdrop').classList.add('open');
+}
+document.querySelectorAll('[data-sheet]').forEach((el) =>
+  el.addEventListener('click', () => openSheet(el.dataset.sheet)));
+$('deferredBar').addEventListener('click', () => openSheet('deferred'));
+$('sheetClose').addEventListener('click', () => $('backdrop').classList.remove('open'));
+$('backdrop').addEventListener('click', (e) => { if (e.target === $('backdrop')) $('backdrop').classList.remove('open'); });
+
+$('wakeToggle').addEventListener('click', (e) => {
+  const on = e.target.classList.toggle('on');
+  e.target.textContent = 'Wake word: ' + (on ? 'on' : 'off');
+  $('wakeState').textContent = on ? 'Say “Hey Shybes” or hold the mic' : 'Push to talk only';
+  $('transcript').textContent = on ? 'Listening for the wake word…' : 'Hold the mic to speak.';
+});
+
+$('pttBtn').addEventListener('mousedown', () => {
+  $('wakeState').classList.add('live');
+  $('wakeState').textContent = 'Listening';
+  $('transcript').classList.remove('dim');
+  $('transcript').textContent = 'when did we last do brakes on this one…';
+});
+$('pttBtn').addEventListener('mouseup', () => {
+  $('wakeState').classList.remove('live');
+  $('wakeState').textContent = 'Say “Hey Shybes” or hold the mic';
+  $('transcript').classList.add('dim');
+  $('transcript').textContent = 'Listening for the wake word…';
+});
+
+const show = (id, on) => $(id).classList.toggle('hidden', !on);
+
+const scenarios = {
+  loaded:     { ro: true,  concern: true,  services: true,  cands: false, insp: false, bar: 'voice' },
+  empty:      { ro: false, concern: false, services: false, cands: false, insp: false, bar: 'voice' },
+  confirm:    { ro: true,  concern: true,  services: true,  cands: false, insp: false, bar: 'confirmVoice' },
+  tap:        { ro: true,  concern: true,  services: true,  cands: false, insp: false, bar: 'confirmTap' },
+  ambiguous:  { ro: false, concern: false, services: false, cands: true,  insp: false, bar: 'voice' },
+  inspection: { ro: true,  concern: false, services: false, cands: false, insp: true,  bar: 'voice' },
+};
+
+function applyScenario(name) {
+  const s = scenarios[name];
+  show('hdrLoaded', s.ro);
+  show('hdrEmpty', !s.ro);
+  $('hdrVehicle').textContent = s.ro
+    ? 'Henderson · 2019 Chevrolet Tahoe · Silver · 96,420 mi'
+    : 'Say a repair order number, a plate, or a name';
+  show('concernBlock', s.concern);
+  show('deferredBar', s.concern);
+  show('servicesBlock', s.services);
+  show('candidatesBlock', s.cands);
+  show('inspectionBlock', s.insp);
+
+  show('voiceBar', s.bar === 'voice');
+  show('confirmVoice', s.bar === 'confirmVoice');
+  show('confirmTap', s.bar === 'confirmTap');
+
+  if (s.cands) {
+    $('wakeState').classList.add('live');
+    $('transcript').classList.remove('dim');
+    $('transcript').textContent = '“I’ve got two Tahoes open — Henderson or Wozniak?”';
+  } else if (s.insp) {
+    $('wakeState').textContent = 'Inspection open · silence ends the item, not the session';
+    $('transcript').textContent = 'front pads four millimetres, yellow ✓ chirp';
+    $('transcript').classList.remove('dim');
+  } else {
+    $('wakeState').classList.remove('live');
+    $('wakeState').textContent = 'Say “Hey Shybes” or hold the mic';
+    $('transcript').classList.add('dim');
+    $('transcript').textContent = 'Listening for the wake word…';
+  }
+}
+
+document.querySelectorAll('.scenarios button').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.scenarios button').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyScenario(btn.dataset.scenario);
+  });
+});
+
+applyScenario('loaded');
+</script>
+</body>
+</html>

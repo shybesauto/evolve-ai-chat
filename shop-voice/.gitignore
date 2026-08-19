@@ -1,0 +1,9 @@
+# The .env holds the Shopmonkey token and lives outside the web root.
+# It must never be committed.
+.env
+
+storage/logs/*
+!storage/logs/.gitkeep
+
+*.sqlite
+*.sqlite-journal

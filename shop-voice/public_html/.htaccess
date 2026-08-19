@@ -1,0 +1,30 @@
+# Bay client + API.
+#
+# Everything that is not a real file routes to the front controller. The bay
+# client itself is static and sits in /bay.
+
+RewriteEngine On
+
+# API and anything else unresolved -> front controller.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Defence in depth: the .env lives outside this directory, but if a deploy ever
+# copies one in by mistake, refuse to serve it rather than leaking the token.
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(sql|log|md)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+    # The tablet needs the mic; nothing else needs anything.
+    Header always set Permissions-Policy "microphone=(self), geolocation=(), camera=()"
+</IfModule>
